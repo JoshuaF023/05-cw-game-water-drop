@@ -26,11 +26,27 @@ Fonts:
 
 body {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
-    background-color: #f0f0f0;
-    font-family: Arial, sans-serif;
+    background-color: #e6f7ff; /* charity: water light blue */
+    font-family: 'Avenir', 'Proxima Nova', Arial, sans-serif;
+}
+
+.branding-bar {
+    width: 100vw;
+    background: rgb(255,247,225); /* Changed from #FFC907 to requested RGB */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 0 8px 0;
+    box-shadow: 0 2px 8px rgba(44, 44, 44, 0.05);
+    margin-bottom: 10px;
+}
+.cw-logo {
+    height: 48px;
+    max-width: 90vw;
 }
 
 .game-wrapper {
@@ -38,84 +54,129 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(44,44,44,0.08);
+    padding: 24px 0 32px 0;
+    margin-bottom: 32px;
 }
 
 .score-panel {
     display: flex;
-    justify-content: space-between;  /* Space between score and button */
+    justify-content: space-between;
     align-items: center;
     width: 800px;
     padding: 10px;
-    background-color: #fff;
+    background-color: #2E9DF7;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    color: #fff;
 }
 
-.timer {
-    flex: 0 1 auto;
+.timer, .score {
     font-size: 24px;
     font-weight: bold;
+}
+
+#start-btn {
+    padding: 8px 16px;
+    background-color: #FFC907;
+    color: #131313;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    transition: background 0.2s;
+}
+#start-btn:disabled {
+    background: #e0e0e0;
+    color: #888;
+    cursor: not-allowed;
+}
+#start-btn:hover:not(:disabled) {
+    background-color: #FFD84D;
 }
 
 #game-container {
     width: 800px;
     height: 600px;
     background-color: #e6f7ff;
-    border: 2px solid #333;
+    border: 2px solid #2E9DF7;
     border-radius: 8px;
     position: relative;
     overflow: hidden;
-}
-
-
-#start-btn {
-    padding: 8px 16px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-#start-btn:hover {
-    background-color: #45a049;
-}
-
-.score {
-    flex: 0 1 auto;  /* Don't grow, can shrink, auto basis */
-    font-size: 24px;
-    font-weight: bold;
+    margin-top: 10px;
 }
 
 .water-drop {
     position: absolute;
-    width: 60px;  /* increased from 40px */
-    height: 60px; /* increased from 40px */
-    background-color: #0099ff;
+    width: 60px;
+    height: 60px;
+    background-color: #2E9DF7; /* Good drop: blue */
     border-radius: 50%;
     animation: dropFall linear forwards;
     transform-origin: center;
     cursor: pointer;
-    padding: 15px;  /* Add padding for larger click area */
-    margin: -15px;  /* Offset padding to maintain visual size */
-    transition: transform 0.1s ease;  /* Smooth hover effect */
+    padding: 15px;
+    margin: -15px;
+    transition: transform 0.1s ease;
+    border: 3px solid #FFC907;
+    box-shadow: 0 2px 8px rgba(44,44,44,0.08);
 }
-
+.dirty-drop {
+    background-color: #F5402C !important; /* Red for dirty (score) drop */
+    border-color: #F16061;
+    box-shadow: 0 2px 8px rgba(245,64,44,0.18);
+}
+.dirty-time-drop {
+    background-color: #FFC907 !important; /* Yellow for dirty (time) drop */
+    border-color: #FF902A;
+    box-shadow: 0 2px 8px rgba(255,201,7,0.18);
+}
 .water-drop:hover {
-    transform: scale(1.1);  /* Slight grow effect on hover */
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px rgba(44,44,44,0.16);
+}
+.dirty-drop:hover, .dirty-time-drop:hover {
+    transform: scale(1.1) rotate(-8deg);
+    filter: brightness(1.1) contrast(1.2);
 }
 
-.bad-drop {
-    background-color: #ff4444;
+.end-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    color: #131313;
+    font-size: 2rem;
+    font-weight: bold;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(44,44,44,0.18);
+    padding: 32px 40px;
+    z-index: 10;
+    text-align: center;
+    max-width: 90%;
+}
+.end-message.win {
+    border: 4px solid #FFC907;
+    color: #159A48;
+}
+.end-message.lose {
+    border: 4px solid #F5402C;
+    color: #F5402C;
 }
 
 .game-title {
-    color: #131313;
+    color: #2E9DF7;
     font-size: 48px;
     margin-top: 0;
-    margin-bottom: 5px;  /* reduced from 20px */
+    margin-bottom: 5px;
     text-align: center;
+    font-family: 'Avenir', 'Proxima Nova', Arial, sans-serif;
+    font-weight: 900;
 }
 
 .game-tagline {
@@ -123,6 +184,32 @@ body {
     font-size: 18px;
     margin-bottom: 20px;
     text-align: center;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+#pause-btn, #reset-btn {
+    padding: 8px 16px;
+    background-color: #8BD1CB;
+    color: #131313;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    transition: background 0.2s;
+}
+#pause-btn:disabled, #reset-btn:disabled {
+    background: #e0e0e0;
+    color: #888;
+    cursor: not-allowed;
+}
+#pause-btn:hover:not(:disabled), #reset-btn:hover:not(:disabled) {
+    background-color: #4FCB53;
+    color: #fff;
 }
 
 @keyframes dropFall {
@@ -136,10 +223,30 @@ body {
 
 @media (max-width: 850px) {
     .game-wrapper, .score-panel, #game-container {
-        width: 95vw;
+        width: 98vw;
+        min-width: 0;
+        max-width: 100vw;
     }
-    
     #game-container {
-        height: 70vh;
+        height: 60vw;
+        min-height: 300px;
+        max-height: 80vh;
+    }
+    .score-panel {
+        flex-direction: column;
+        gap: 10px;
+        width: 98vw;
+    }
+}
+@media (max-width: 500px) {
+    .game-title {
+        font-size: 2rem;
+    }
+    .end-message {
+        font-size: 1.1rem;
+        padding: 16px 8px;
+    }
+    .cw-logo {
+        height: 32px;
     }
 }
