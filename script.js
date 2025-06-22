@@ -24,11 +24,43 @@ const startBtn = document.getElementById("start-btn");
 const pauseBtn = document.getElementById("pause-btn");
 const resetBtn = document.getElementById("reset-btn");
 const gameContainer = document.getElementById("game-container");
+const difficultySelect = document.getElementById("difficulty-select");
+
+let paused = false;
+let difficulty = "normal";
+let winScore = 20;
+let startTime = 30;
+let dropInterval = 1000;
+
+const popSound = new Audio('Sound/810763__mokasza__single-bubble-pop-01.mp3');
+popSound.volume = 0.5; // Adjust volume as needed
 
 // Wait for button click to start the game
 document.getElementById("start-btn").addEventListener("click", startGame);
 pauseBtn.addEventListener("click", pauseGame);
 resetBtn.addEventListener("click", resetGame);
+difficultySelect.addEventListener("change", setDifficulty);
+
+function setDifficulty() {
+  difficulty = difficultySelect.value;
+  if (difficulty === "easy") {
+    winScore = 10;
+    startTime = 40;
+    dropInterval = 1300;
+    window.dropFallDuration = 4;
+  } else if (difficulty === "normal") {
+    winScore = 20;
+    startTime = 30;
+    dropInterval = 1000;
+    window.dropFallDuration = 4;
+  } else if (difficulty === "hard") {
+    winScore = 30;
+    startTime = 20;
+    dropInterval = 700;
+    window.dropFallDuration = 2.2;
+  }
+  resetGame();
+}
 
 function startGame() {
   // Prevent multiple games from running at once
@@ -38,14 +70,14 @@ function startGame() {
   paused = false;
   pauseBtn.textContent = "Pause";
   score = 0;
-  timeLeft = 30;
+  timeLeft = startTime;
   scoreDisplay.textContent = score;
   timeDisplay.textContent = timeLeft;
   startBtn.disabled = true;
   clearDrops();
   removeEndMessage();
-  // Create new drops every second (1000 milliseconds)
-  dropMaker = setInterval(createDrop, 1000);
+  // Create new drops at the interval defined by the current difficulty
+  dropMaker = setInterval(createDrop, dropInterval);
   timerInterval = setInterval(updateTimer, 1000);
 }
 
@@ -67,12 +99,12 @@ function endGame() {
   pauseBtn.textContent = "Pause";
   removeAllDrops();
   let message;
-  if (score >= 20) {
+  if (score >= winScore) {
     message = winningMessages[Math.floor(Math.random() * winningMessages.length)];
   } else {
     message = losingMessages[Math.floor(Math.random() * losingMessages.length)];
   }
-  showEndMessage(message, score >= 20);
+  showEndMessage(message, score >= winScore);
 }
 
 function showEndMessage(msg, win) {
@@ -117,7 +149,10 @@ function createDrop() {
   const gameWidth = gameContainer.offsetWidth;
   const xPosition = Math.random() * (gameWidth - 60);
   drop.style.left = xPosition + "px";
-  drop.style.animationDuration = "4s";
+  drop.style.top = "0";
+  // Use variable animation duration for hard mode
+  const fallDuration = window.dropFallDuration || 4;
+  drop.style.animation = `dropFall ${fallDuration}s linear forwards`;
 
   drop.addEventListener("animationend", () => {
     drop.remove();
@@ -125,6 +160,8 @@ function createDrop() {
 
   drop.addEventListener("click", () => {
     if (!gameRunning) return;
+    popSound.currentTime = 0;
+    popSound.play();
     if (dropType === "good") {
       score++;
       scoreDisplay.textContent = score;
@@ -166,7 +203,7 @@ function resetGame() {
   clearInterval(dropMaker);
   clearInterval(timerInterval);
   score = 0;
-  timeLeft = 30;
+  timeLeft = startTime;
   scoreDisplay.textContent = score;
   timeDisplay.textContent = timeLeft;
   startBtn.disabled = false;
@@ -174,3 +211,4 @@ function resetGame() {
   clearDrops();
   removeEndMessage();
 }
+console.log("createDrop called");
